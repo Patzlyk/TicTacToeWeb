@@ -20,6 +20,7 @@
     document.addEventListener("click", mouseClickHandler, false)
 
     var nextTurnPlayer = 0;
+    var gameSize = 5;
 
     function mouseClickHandler(e)
     {
@@ -46,8 +47,9 @@
             drawCircle(posX, posY);
             nextTurnPlayer = 0;
         }
-    }
 
+        drawCurrentPlayerText();
+    }
 
     function drawCross(posX, posY)
     {
@@ -60,13 +62,14 @@
         context.moveTo(posX * 50 + 45, posY * 50 + 5);
         context.lineTo(posX * 50 + 5, posY * 50 + 45);
         context.stroke();
+        context.closePath();
     }
 
     function drawCircle(posX, posY)
     {
+        context.beginPath();
         context.lineWidth = 5;
         context.strokeStyle = "#00AAFF";
-        context.beginPath();
         context.arc(posX * 50 + 25, posY * 50 + 25, 20, 0, Math.PI * 2)
         context.stroke();
         context.closePath();
@@ -89,7 +92,43 @@
 
         context.closePath();
     }
-    drawGameField(5);
+
+    function drawCurrentPlayerText()
+    {
+        context.clearRect(gameSize * 50 + 50, 60, 160, 50)
+
+        context.beginPath();
+        context.fillStyle = "#000000";
+        context.font = "40px Arial"
+        context.fillText("Hraje:", gameSize * 50 + 50, 100);
+        context.closePath();
+
+        if (nextTurnPlayer == 0)
+        {
+            context.beginPath();
+            context.lineWidth = 5;
+            context.strokeStyle = "#FF0000";
+            context.moveTo(gameSize * 50 + 165, 60 + 5);
+            context.lineTo(gameSize * 50 + 205, 60 + 45);
+            context.stroke();
+            context.moveTo(gameSize * 50 + 205, 60 + 5);
+            context.lineTo(gameSize * 50 + 165, 60 + 45);
+            context.stroke();
+        }
+        else
+        {
+            context.beginPath();
+            context.lineWidth = 5;
+            context.strokeStyle = "#00AAFF";
+            context.arc(gameSize * 50 + 185, 85, 20, 0, Math.PI * 2)
+            context.stroke();
+            context.closePath();
+        }
+    }
+
+    drawGameField(gameSize);
+    drawCurrentPlayerText();
+
 </script>
 
 </body>
