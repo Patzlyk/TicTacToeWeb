@@ -16,8 +16,10 @@
 <script>
     var canv = document.getElementById("gameCanvas");
     var context = canv.getContext("2d");
-    
+
     document.addEventListener("click", mouseClickHandler, false)
+
+    var nextTurnPlayer = 0;
 
     function mouseClickHandler(e)
     {
@@ -29,8 +31,23 @@
         var clickedGameX = Math.round((clickedX - 25) / 50);
         var clickedGameY = Math.round((clickedY - 25) / 50);
 
-        drawCross(clickedGameX, clickedGameY);
+        placeMark(clickedGameX, clickedGameY);
     }
+
+    function placeMark(posX, posY)
+    {
+        if (nextTurnPlayer == 0)
+        {
+            drawCross(posX, posY);
+            nextTurnPlayer = 1;
+        }
+        else
+        {
+            drawCircle(posX, posY);
+            nextTurnPlayer = 0;
+        }
+    }
+
 
     function drawCross(posX, posY)
     {
@@ -73,14 +90,6 @@
         context.closePath();
     }
     drawGameField(5);
-
-    drawCircle(0, 1);
-    drawCircle(2, 2);
-    drawCross(0, 0);
-    drawCross(1, 0);
-    drawCross(1, 1);
-    drawCross(1, 2);
-    drawCross(1, 3);
 </script>
 
 </body>
