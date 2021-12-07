@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Patrikovy naprosto geniální piškvorky</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="1280" height="720"></canvas>
+
+<script>
+    var canv = document.getElementById("myCanvas");
+    var context = canv.getContext("2d");
+
+    function printCross(posX, poxY)
+    {
+        context.beginPath();
+        context.rect(posX * 50, poxY * 50, 50, 50);
+        context.fillStyle = "#000000";
+        context.fill();
+        context.closePath();
+    }
+
+    
+
+    context.beginPath();
+    context.rect(20, 20, 100, 100);
+    context.fillStyle = "#FF0000";
+    context.fill();
+    context.closePath();
+
+    context.beginPath();
+    context.arc(70, 70, 50, 10, 360)
+    context.fillStyle = "#0000FF"
+    context.fill();
+    context.closePath();
+
+    context.lineWidth = 10;
+
+    context.beginPath();
+    context.arc(70, 70, 50, 0, 3.14 * 1)
+    context.strokeStyle = "#00FF00";
+    context.stroke();
+    context.fillStyle = "#FF0000";
+    context.fill();
+    context.closePath();
+
+    printCross(2, 1);
+</script>
+
+</body>
+</html>
