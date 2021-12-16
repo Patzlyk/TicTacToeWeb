@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>NASA simulátor gravitace</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        
+        canvas {
+            background: #eee;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+    <script>
+        var canv = document.getElementById("gameCanvas");
+        var context = canv.getContext("2d");
+
+        document.addEventListener("click", mouseClickHandler, false)
+        document.addEventListener("keypress", keyPressHandler, false)
+
+        var simulationStopped = true
+        var frameDelay = 25
+
+        // X, Y, Mass, Force X, Force Y
+        var objects = [
+            [400, 300, 1, 0, 0],
+            [400, 200, 10, 6, 0],
+            [400, 400, 10, -6, 0],
+            [300, 300, 10, 0, -5],
+            [500, 300, 10, 0, 5],
+        ]
+
+        var objectColors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF"]
+
+        function mouseClickHandler(e) {
+            if (simulationStopped) {
+                simulationStopped = false
+            } else {
+                simulationStopped = true
+            }
+        }
+
+        function keyPressHandler(e) {
+            if (e.code == "Space") {
+                if (simulationStopped) {
+                    simulationStopped = false
+                } else {
+                    simulationStopped = true
+                }
+            }
+        }
+
+        function doPhysics() {
+            for (var i = 0; i < objects.length; i++) {
+                for (var j = 0; j < objects.length; j++) {
+                    if (j != i) {
+                        addForce(objects[i], objects[j])
+                    }
+                }
+            }
+
+            for (var i = 0; i < objects.length; i++) {
+                objects[i][0] += objects[i][3]
+                objects[i][1] += objects[i][4]
+            }
+        }
+
+        function addForce(object1, object2) {
+            var xDiff = object1[0] - object2[0]
+            var yDiff = object1[1] - object2[1]
+            var diffSum = Math.abs(xDiff) + Math.abs(yDiff)
+
+            var addedForce = object1[2] * object2[2] / getDistance(object1, object2)
+
+            var forceDivSum = addedForce / diffSum
+
+            var xForce = forceDivSum * xDiff * -1
+            var yForce = forceDivSum * yDiff * -1
+
+            object1[3] += xForce
+            object1[4] += yForce
+
+            console.log("added x: " + xForce)
+            console.log("added y: " + yForce)
+        }
+
+        function getDistance(object1, object2) {
+            var xDiff = object1[0] - object2[0]
+            var yDiff = object1[1] - object2[1]
+            var powerSum = Math.pow(xDiff, 2) + Math.pow(yDiff, 2)
+            return Math.sqrt(powerSum)
+        }
+
+        function drawFrame() {
+            if (!simulationStopped) {
+                doPhysics()
+            }
+
+            context.clearRect(0, 0, 1280, 720)
+
+            for (var i = 0; i < objects.length; i++) {
+                context.beginPath()
+                context.rect(objects[i][0] - 10, objects[i][1] - 10, 20, 20)
+                context.fillStyle = objectColors[i]
+                context.fill()
+                context.closePath()
+            }
+        }
+
+        setInterval(drawFrame, frameDelay);
+    </script>
+
+</body>
+
+</html>
