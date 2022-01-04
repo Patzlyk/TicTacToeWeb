@@ -34,21 +34,20 @@
 
         // X, Y, Mass, Force X, Force Y
         var objects = [
-            [400, 300, 1, 0, 0],
-            [400, 200, 10, 6, 0],
-            [400, 400, 10, -6, 0],
-            [300, 300, 10, 0, -5],
-            [500, 300, 10, 0, 5],
+            [-50, 0, 10, 0, 5],
+            [50, 0, 10, 0, -5]
         ]
 
         var objectColors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF"]
 
         function mouseClickHandler(e) {
+            /*
             if (simulationStopped) {
                 simulationStopped = false
             } else {
                 simulationStopped = true
             }
+            */
         }
 
         function keyPressHandler(e) {
@@ -58,6 +57,22 @@
                 } else {
                     simulationStopped = true
                 }
+            } else if (e.code == "Numpad8") {
+                selectedMenuOption -= 1
+                if (selectedMenuOption < 0) {
+                    selectedMenuOption = menuOptionCount - 1
+                }
+            } else if (e.code == "Numpad2") {
+                selectedMenuOption += 1
+                if (selectedMenuOption == menuOptionCount) {
+                    selectedMenuOption = 0
+                }
+            } else if (e.code == "Numpad5") {
+                PressSelectedMenuOption()
+            } else if (e.code == "Numpad4") {
+                AdjustSelectedMenuOption("left")
+            } else if (e.code == "Numpad6") {
+                AdjustSelectedMenuOption("right")
             }
         }
 
@@ -102,6 +117,9 @@
             return Math.sqrt(powerSum)
         }
 
+        var cameraX = 0
+        var cameraY = 0
+
         function drawFrame() {
             if (!simulationStopped) {
                 doPhysics()
@@ -111,10 +129,170 @@
 
             for (var i = 0; i < objects.length; i++) {
                 context.beginPath()
-                context.rect(objects[i][0] - 10, objects[i][1] - 10, 20, 20)
+                context.rect(objects[i][0] - 10 + 640 - cameraX, objects[i][1] - 10 + 360 - cameraY, 20, 20)
                 context.fillStyle = objectColors[i]
                 context.fill()
                 context.closePath()
+            }
+
+            drawMenu()
+        }
+
+        var selectedMenuOption = 0
+        var menuOptionCount = 9
+        var selectedObject = 0
+
+        function drawMenu() {
+            // Draw the selection rectangle
+            context.beginPath()
+            context.rect(0, selectedMenuOption * 50, 200, 50)
+            context.fillStyle = "#FAB40B"
+            context.fill()
+            context.closePath()
+
+            // Start button
+            context.beginPath();
+            context.fillStyle = "#000000";
+            context.font = "30px Arial"
+            if (simulationStopped == true) {
+                context.fillText("Start", 5, 35);
+            } else {
+                context.fillText("Stop", 5, 35)
+            }
+            context.closePath();
+
+            // Object selector
+            context.beginPath();
+            context.fillStyle = "#000000";
+            context.font = "30px Arial"
+            context.fillText("Object: " + selectedObject, 5, 85)
+            context.closePath();
+
+            if (objects.length > 0) {
+                // Mass option
+                context.beginPath();
+                context.fillStyle = "#000000";
+                context.font = "30px Arial"
+                context.fillText("Mass: " + objects[selectedObject][2], 5, 135)
+                context.closePath();
+
+                // Pos X option
+                context.beginPath();
+                context.fillStyle = "#000000";
+                context.font = "30px Arial"
+                context.fillText("X: " + objects[selectedObject][0], 5, 185)
+                context.closePath();
+
+                // Pos X option
+                context.beginPath();
+                context.fillStyle = "#000000";
+                context.font = "30px Arial"
+                context.fillText("Y: " + objects[selectedObject][1], 5, 235)
+                context.closePath();
+
+                // Velocity X option
+                context.beginPath();
+                context.fillStyle = "#000000";
+                context.font = "30px Arial"
+                context.fillText("Speed X: " + objects[selectedObject][3], 5, 285)
+                context.closePath();
+
+                // Velocity Y option
+                context.beginPath();
+                context.fillStyle = "#000000";
+                context.font = "30px Arial"
+                context.fillText("Speed Y: " + objects[selectedObject][4], 5, 335)
+                context.closePath();
+            }
+
+            // Spawn object option
+            context.beginPath();
+            context.fillStyle = "#000000";
+            context.font = "30px Arial"
+            context.fillText("Spawn object", 5, 385)
+            context.closePath();
+
+            // Delete object option
+            context.beginPath();
+            context.fillStyle = "#000000";
+            context.font = "30px Arial"
+            context.fillText("Delete seleced", 5, 435)
+            context.closePath();
+        }
+
+        function PressSelectedMenuOption() {
+            if (selectedMenuOption == 0) {
+                if (simulationStopped) {
+                    simulationStopped = false
+                } else {
+                    simulationStopped = true
+                }
+            } else if (selectedMenuOption == 7) {
+                objects.push([0, 0, 10, 0, 0])
+            } else if (selectedMenuOption == 8) {
+                objects.splice(selectedObject, 1)
+            }
+        }
+
+        function AdjustSelectedMenuOption(direction) {
+            // Object selecting
+            if (selectedMenuOption == 1) {
+                if (direction == "left") {
+                    selectedObject--
+                    if (selectedObject == -1) {
+                        selectedObject = objects.length - 1
+                    }
+                } else if (direction == "right") {
+                    selectedObject++
+                    if (selectedObject == objects.length) {
+                        selectedObject = 0
+                    }
+                }
+            }
+
+            // Mass adjustment
+            else if (selectedMenuOption == 2) {
+                if (direction == "left") {
+                    objects[selectedObject][2]--
+                } else if (direction == "right") {
+                    objects[selectedObject][2]++
+                }
+            }
+
+            // X adjustment
+            else if (selectedMenuOption == 3) {
+                if (direction == "left") {
+                    objects[selectedObject][0]--
+                } else if (direction == "right") {
+                    objects[selectedObject][0]++
+                }
+            }
+
+            // Y adjustment
+            else if (selectedMenuOption == 4) {
+                if (direction == "left") {
+                    objects[selectedObject][1]--
+                } else if (direction == "right") {
+                    objects[selectedObject][1]++
+                }
+            }
+
+            // Mass adjustment
+            else if (selectedMenuOption == 5) {
+                if (direction == "left") {
+                    objects[selectedObject][3]--
+                } else if (direction == "right") {
+                    objects[selectedObject][3]++
+                }
+            }
+
+            // Mass adjustment
+            else if (selectedMenuOption == 6) {
+                if (direction == "left") {
+                    objects[selectedObject][4]--
+                } else if (direction == "right") {
+                    objects[selectedObject][4]++
+                }
             }
         }
 
